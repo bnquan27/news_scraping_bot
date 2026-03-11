@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 from google import genai
 import json
-import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from requests_html import HTMLSession
@@ -51,6 +50,8 @@ def main():
             all_articles.append(article)
     with open("articles.json", "w") as fp:
         json.dump(all_articles, fp, indent=4, ensure_ascii=False)
+
+    # Tag generator
     with open("articles.json", "r") as fp:
         json_cont = fp.read()
     prompt = (
