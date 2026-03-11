@@ -6,6 +6,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+from requests_html import HTMLSession
 
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
@@ -24,13 +25,16 @@ def has_aria_label_and_href(tag):
 
 def main():
     url = "https://news.google.com"
-    reqs = requests.get(url)
-    soup = BeautifulSoup(reqs.text, "html.parser")
+    session = HTMLSession()
+    reqs = session.get(url)
+    reqs.html.render(sleep=2)
+    soup = BeautifulSoup(reqs.html.html, "html.parser")
+    session.close()
 
     all_articles = []
     for link in soup.find_all(has_aria_label_and_href):
         title = link.get("aria-label")
-        tmp = title.split(" - ", 4)  # TO-DO right split and max split
+        tmp = title.split(" - ", 4)
         if len(tmp) == 4:
             name, publishers, time, authors = tmp[0], tmp[1], tmp[2], tmp[3]
             article_link = link.get("href")
